@@ -7,7 +7,7 @@ export const routes = [
     {
         path: '/category',
         name: 'category',
-        component: ()=>import('./components/ExampleComponent2')
+        component: ()=>import('./components/category/Category')
     }
 // { path: '/bar', component: Bar }
 ]

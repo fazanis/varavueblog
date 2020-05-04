@@ -52743,13 +52743,13 @@ var routes = [{
   path: '/',
   name: 'home',
   component: function component() {
-    return __webpack_require__.e(/*! import() */ 1).then(__webpack_require__.bind(null, /*! ./components/Home */ "./resources/js/components/Home.vue"));
+    return __webpack_require__.e(/*! import() */ 0).then(__webpack_require__.bind(null, /*! ./components/Home */ "./resources/js/components/Home.vue"));
   }
 }, {
   path: '/category',
   name: 'category',
   component: function component() {
-    return __webpack_require__.e(/*! import() */ 0).then(__webpack_require__.bind(null, /*! ./components/ExampleComponent2 */ "./resources/js/components/ExampleComponent2.vue"));
+    return __webpack_require__.e(/*! import() */ 1).then(__webpack_require__.bind(null, /*! ./components/category/Category */ "./resources/js/components/category/Category.vue"));
   }
 } // { path: '/bar', component: Bar }
 ];

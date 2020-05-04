@@ -1,5 +1,5 @@
 start:
-	@ cd laradock && sudo docler-compose up -d nginx mysql phpmyadmin workspace
+	@ cd laradock && sudo docker-compose up -d nginx mysql phpmyadmin workspace
 stop:
 	@ cd laradock && sudo docker-compose down
 ssh:
