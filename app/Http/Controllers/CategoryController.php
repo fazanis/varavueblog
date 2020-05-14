@@ -14,7 +14,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        return Category::all();
     }
 
     /**
@@ -35,7 +35,11 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name'=>'required|min:3'
+        ]);
+
+        return Category::create(['name'=>$request->name]);
     }
 
     /**
@@ -69,7 +73,9 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        //
+
+        $category->update($request->all());
+        return 'ok';
     }
 
     /**
@@ -80,6 +86,6 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        return Category::destroy($category->id);
     }
 }

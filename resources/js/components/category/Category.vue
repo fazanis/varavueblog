@@ -8,7 +8,9 @@
         <div class="card shadow mb-4">
             <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">Таблица категорий</h6>
-                <router-link to="add_category" class="btn btn-info float-right" style="color: #ffffff">Добавить</router-link>
+                <button
+                @click="showModal"
+                class="btn btn-info float-right" style="color: #ffffff">Добавить <i class="fas fa-plus"></i></button>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -28,10 +30,16 @@
                         </tr>
                         </tfoot>
                         <tbody>
-                        <tr role="row" class="odd">
-                            <td class="sorting_1">№</td>
-                            <td>Название</td>
-                            <td>Действия</td>
+                        <tr role="row" class="odd"
+                        v-for="category in categories">
+                            <td class="sorting_1">{{ category.id }}</td>
+                            <td>{{ category.name }}</td>
+                            <td>
+                            <a href="#" @click.prevent="edit(category)"><i class="fas fa-edit"></i></a>
+                            /
+                            <a href="#" @click.prevent="del(category.id)"><i class="fas fa-trash-alt" style="color: red"></i></a>
+
+                            </td>
                         </tr>
                         </tbody>
                     </table></div></div>
@@ -40,13 +48,112 @@
             </div>
         </div>
 
+        <!-- Modal -->
+        <div class="modal fade" id="adcategory" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" v-if="!isEdit" id="exampleModalLabel">Добавление категории</h5>
+                <h5 class="modal-title" v-else id="exampleModalLabel">Редактирование категории</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form @submit.prevent="isEdit ? editCategory() : saveCategory()" @keydown="form.onKeydown($event)">
+            <div class="modal-body">
+               <div class="form-group">
+                    <label>Название</label>
+                    <input v-model="form.name" type="text" name="name"
+                        class="form-control"
+                        :class="{ 'is-invalid': form.errors.has('name') }">
+                    <has-error :form="form" field="name"></has-error>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+               <button :disabled="form.busy" type="submit" class="btn btn-primary">Сохранить</button>
+            </div>
+            </form>
+            </div>
+        </div>
+        </div>
     </div>
 </template>
 
 <script>
     export default {
+        data(){
+            return{
+                categories:'',
+                isEdit: false,
+                form: new Form({
+                    id:'',
+                name: '',
+                })
+            }
+        },
+        methods:{
+            del:function(id){
+                swal.fire({
+                title: 'Вы уверены что хотите удалить категорию?',
+                text: "Категория будет удалена безвозвратно",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Да удалить!'
+                }).then((result) => {
+                if (result.value) {
+                        axios.delete('/category/'+id).then((response)=>{
+                            this.getCategory();
+                        });
+                    swal.fire(
+                    'Удалено!',
+                    'Категория успешно удалена!',
+                    'success'
+                    )
+                }
+                })
+
+            },
+            edit:function(category){
+                $('#adcategory').modal('show');
+                this.isEdit = true;
+                this.form.fill(category);
+            },
+            showModal:function(){
+                this.form.reset();
+                $('#adcategory').modal('show');
+            },
+            saveCategory:function(){
+                this.form.post('/category').then((response)=>{
+                    $('#adcategory').modal('hide');
+                    this.getCategory();
+                    toast.fire({
+                        icon: 'success',
+                        title: 'Категория успешно сохранена'
+                    })
+                });
+            },
+            editCategory:function(){
+                this.form.put('/category/'+this.form.id).then((response)=>{
+                    $('#adcategory').modal('hide');
+                    this.getCategory();
+                    toast.fire({
+                        icon: 'success',
+                        title: 'Категория успешно обновлена!'
+                    })
+                });
+            },
+            getCategory:function(){
+                axios.get('/category').then((response)=>{
+                    this.categories=response.data;
+                });
+            },
+        },
         mounted() {
-            console.log('Component mounted2.')
+            this.getCategory();
         }
     }
 </script>
